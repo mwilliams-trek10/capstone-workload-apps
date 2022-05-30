@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using FrontendTeamBlazorApplication.Data;
+using FrontendTeamBlazorApplication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<OrganizationService>();
+
+builder.Services.AddHttpClient("BackendService", httpClient =>
+{
+    httpClient.BaseAddress = new Uri("http://127.0.0.1:12345/api/sampleservice");
+});
 
 var app = builder.Build();
 

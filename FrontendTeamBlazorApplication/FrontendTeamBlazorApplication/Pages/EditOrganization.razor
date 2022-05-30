@@ -1,0 +1,42 @@
+@page "/editorganization"
+@using FrontendTeamBlazorApplication.Models
+
+<h3>EditOrganization</h3>
+
+@* <EditForm Model="Organization" OnSubmit="OnSubmit"> *@
+<div>
+    <p>
+        <input type="submit" value="Submit" class="btn btn-primary" disabled="@_addOrganizationDisabled" @onclick="@OnSubmit" />
+        <label hidden="@_savingHidden" >@_savingLabel</label>
+    </p>
+</div>
+@* </EditForm> *@
+
+@code {
+    private bool _savingHidden = false;
+    
+    private bool _addOrganizationDisabled;
+    
+    private string _savingLabel = "Saving Data";
+    
+    private bool _displayValidationMessages;
+    
+    private bool _hideValidationMessagesLabel = true;
+
+    private Organization Organization { get; } = new();
+
+    Dictionary<string, object> _savingLabelAttributes = new Dictionary<string, object>();
+
+    private async Task OnSubmit()
+    {
+        _addOrganizationDisabled = true;
+        _savingHidden = false;
+        _savingLabel = "Saving";
+        StateHasChanged();
+        
+        
+        await Task.Delay(3000);
+        _savingLabel = "Saved";
+    }
+  
+}
