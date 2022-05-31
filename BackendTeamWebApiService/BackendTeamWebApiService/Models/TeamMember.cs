@@ -1,4 +1,4 @@
-namespace ReportingTeamWebApiService.Models;
+namespace BackendTeamWebApiService.Models;
 
 /// <summary>
 /// Team Member
@@ -8,10 +8,10 @@ public sealed class TeamMember : Person
     /// <summary>
     /// Gets or sets the Supervisor Id
     /// </summary>
-    public int SupervisorId { get; set; }
+    public Guid SupervisorId { get; set; }
 
     /// <summary>
     /// Gets or sets the Team Id
     /// </summary>
-    public int TeamId { get; set; }
+    public Guid TeamId { get; set; }
 }

@@ -1,9 +1,9 @@
 namespace BackendTeamWebApiService.Models;
 
 /// <summary>
-/// Person class
+/// Person
 /// </summary>
-public abstract class Person : IPerson
+public interface IPerson
 {
     /// <summary>
     /// Gets or sets the Id

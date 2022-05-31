@@ -1,4 +1,4 @@
-namespace ReportingTeamWebApiService.Models;
+namespace BackendTeamWebApiService.Models;
 
 /// <summary>
 /// Team
@@ -8,12 +8,17 @@ public class Team
     /// <summary>
     /// Gets or sets the Id
     /// </summary>
-    public int Id { get; set; }
+    public Guid Id { get; set; }
+
+    /// <summary>
+    /// Gets or sets the team number
+    /// </summary>
+    public string TeamNumber { get; set; }
 
     /// <summary>
     /// Gets or sets the Organization Id
     /// </summary>
-    public int OrganizationId { get; set; }
+    public Guid OrganizationId { get; set; }
 
     /// <summary>
     /// Gets or sets the Team Name

@@ -53,6 +53,7 @@ public sealed class OrganizationController : ControllerBase
     {
         try
         {
+            await _organizationService.CreateScrumOrganizationAsync(addOrganizationArgs);
             return this.Ok();
         }
         catch (Exception ex)
@@ -75,6 +76,27 @@ public sealed class OrganizationController : ControllerBase
         try
         {
             return this.Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            throw;
+        }
+    }
+    
+    /// <summary>
+    /// Gets all scrum organizations.
+    /// </summary>
+    /// <returns>Ok Http Status code if successful.</returns>
+    [HttpPost]
+    [ProducesResponseType(typeof(List<Organization>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAllScrumOrganizationsAsync()
+    {
+        try
+        {
+            List<Organization> organizations = await _organizationService.GetAllOrganizationsAsync();
+            return this.Ok(organizations);
         }
         catch (Exception ex)
         {

@@ -1,42 +1,68 @@
-@page "/editorganization"
+@page "/editorganization/{ScrumOrganizationId}"
 @using FrontendTeamBlazorApplication.Models
+@using FrontendTeamBlazorApplication.Services
 
-<h3>EditOrganization</h3>
+@inject NavigationManager NavigationManager
+@inject ScrumOrganizationService ScrumOrganizationService;
 
-@* <EditForm Model="Organization" OnSubmit="OnSubmit"> *@
-<div>
+<h3>Edit Organization</h3>
+
+@if (string.IsNullOrEmpty(ScrumOrganizationId))
+{
     <p>
-        <input type="submit" value="Submit" class="btn btn-primary" disabled="@_addOrganizationDisabled" @onclick="@OnSubmit" />
-        <label hidden="@_savingHidden" >@_savingLabel</label>
+        <em>Unable to locate scrum organization!</em>
     </p>
-</div>
-@* </EditForm> *@
+}
+else
+{
+    <EditForm Model="Organization" OnSubmit="OnSubmit">
+        <DataAnnotationsValidator />
+        <div class="add-boxes">
+            <p>
+                <label class="input-label">Organization Name:</label>
+                <InputText @bind-Value=Organization.Name id="Name"/>
+            </p>
+        </div>
+        <div>
+            <p>
+                <input type="submit" value="Submit" class="btn btn-primary" disabled="@_submitDisabled"/>
+                <label hidden="@_savingHidden">Saving...</label>
+            </p>
+        </div>
+    </EditForm>
+}
+
+
 
 @code {
-    private bool _savingHidden = false;
+    [Parameter]
+    public string ScrumOrganizationId { get; set; }
+
+    private bool _savingHidden = true;
     
-    private bool _addOrganizationDisabled;
-    
-    private string _savingLabel = "Saving Data";
+    private bool _submitDisabled;
     
     private bool _displayValidationMessages;
-    
-    private bool _hideValidationMessagesLabel = true;
 
-    private Organization Organization { get; } = new();
+    private Organization Organization { get; set; }
 
     Dictionary<string, object> _savingLabelAttributes = new Dictionary<string, object>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        Guid id = Guid.Parse(ScrumOrganizationId);
+        Organization = await ScrumOrganizationService.GetScrumOrganizationsByIdAsync(id);
+    }
+
     private async Task OnSubmit()
     {
-        _addOrganizationDisabled = true;
+        _submitDisabled = true;
         _savingHidden = false;
-        _savingLabel = "Saving";
         StateHasChanged();
         
-        
         await Task.Delay(3000);
-        _savingLabel = "Saved";
+
+        NavigationManager.NavigateTo("/vieworganizations", true);
     }
   
 }

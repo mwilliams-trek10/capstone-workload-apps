@@ -1,4 +1,4 @@
-namespace ReportingTeamWebApiService.Models;
+namespace BackendTeamWebApiService.Models;
 
 /// <summary>
 /// Supervisor

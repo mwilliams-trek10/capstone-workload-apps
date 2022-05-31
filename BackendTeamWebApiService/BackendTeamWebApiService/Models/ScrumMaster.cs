@@ -1,4 +1,4 @@
-namespace ReportingTeamWebApiService.Models;
+namespace BackendTeamWebApiService.Models;
 
 /// <summary>
 /// Scrum Master
@@ -8,5 +8,5 @@ public sealed class ScrumMaster : Person
     /// <summary>
     /// Gets or sets the Team Id
     /// </summary>
-    public int TeamId { get; set; }
+    public Guid TeamId { get; set; }
 }

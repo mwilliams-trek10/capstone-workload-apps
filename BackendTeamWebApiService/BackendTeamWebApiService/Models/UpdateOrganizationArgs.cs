@@ -11,7 +11,7 @@ public sealed class UpdateOrganizationArgs
     /// Gets or sets the Id
     /// </summary>
     [Required]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Gets or sets the Name

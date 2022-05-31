@@ -17,11 +17,17 @@ public sealed class AddOrganizationArgs
     /// Gets or sets the Employee Count
     /// </summary>
     [Required]
-    public int EmployeeCount { get; set; }
+    public int TeamMemberCount { get; set; }
 
     /// <summary>
     /// Gets or sets the Scrum Team Count
     /// </summary>
     [Required]
     public int ScrumTeamCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Supervisor Count
+    /// </summary>
+    [Required]
+    public int SupervisorCount { get; set; }
 }

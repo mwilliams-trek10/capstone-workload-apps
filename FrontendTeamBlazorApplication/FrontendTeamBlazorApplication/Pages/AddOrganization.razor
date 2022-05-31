@@ -4,7 +4,8 @@
 @using FrontendTeamBlazorApplication.Services
 @using Microsoft.AspNetCore.Components
 
-@inject OrganizationService OrganizationService;
+@inject ScrumOrganizationService ScrumOrganizationService;
+@inject NavigationManager NavigationManager;
 
 <!DOCTYPE html>
 
@@ -22,7 +23,7 @@
     </p>
     <p>
       <label class="input-label">Employee Count:</label>
-      <InputNumber @bind-Value="Organization.EmployeeCount "/>
+      <InputNumber @bind-Value="Organization.TeamMemberCount "/>
     </p>
     <p>
       <label class="input-label">Scrum Team Count:</label>
@@ -116,8 +117,9 @@
   {
     try
     {
-      await OrganizationService.AddOrganization(organization);
-      SetFormOnSuccessfulSave();
+      await ScrumOrganizationService.AddOrganization(organization);
+      //SetFormOnSuccessfulSave();
+      NavigationManager.NavigateTo("/vieworganizations/1", true);
     }
     catch(Exception exception)
     {

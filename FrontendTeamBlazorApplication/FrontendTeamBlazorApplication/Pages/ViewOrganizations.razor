@@ -1,0 +1,93 @@
+@page "/vieworganizations"
+@page "/vieworganizations/{MessageId:int}"
+
+@using Services;
+@using FrontendTeamBlazorApplication.Models
+@inject ScrumOrganizationService ScrumOrganizationService
+@inject NavigationManager NavigationManager
+
+<h3>Scrum Organizations</h3>
+
+@if (IsMessageValid())
+{
+    <div class="row bg-success text-white" style="margin-top:10px; height:40px" hidden="@_hideMessage">
+        <label class="p-2">@_messages[MessageId.Value]</label>
+    </div>
+}
+
+@if (_organizations == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Organization Name</th>
+            <th>Id</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var organization in _organizations)
+        {
+            <tr>
+                <td>@organization.Name</td>
+                <td>@organization.Id</td>
+                <td><a href="/editorganization/@organization.Id.ToString()">Edit</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    
+    <div>
+        <p>
+            <input type="submit" value="Add Organization" class="btn btn-primary" @onclick="@AddNewOrganizationButtonClick">
+        </p>
+    </div>
+}
+
+@code {
+
+    private bool _hideMessage = true;
+
+    private Dictionary<int, string> _messages = new Dictionary<int, string> 
+    {
+        {1, "Save successful"}
+    };
+
+    [Parameter]
+    public int? MessageId { get; set; }
+
+    private List<Organization> _organizations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _organizations = await ScrumOrganizationService.GetAllScrumOrganizationsAsync();
+
+        if (IsMessageValid())
+        {
+            _hideMessage = false;
+            await Task.Delay(5000).ContinueWith(task => HideMessage());
+        }
+    }
+
+    private void AddNewOrganizationButtonClick()
+    {
+        NavigationManager.NavigateTo("/addorganization", true);
+    }
+
+    private bool IsMessageValid()
+    {
+        return MessageId.HasValue && _messages.ContainsKey(MessageId.Value);
+    }
+
+    private void HideMessage()
+    {
+        _hideMessage = true;
+    }
+
+}

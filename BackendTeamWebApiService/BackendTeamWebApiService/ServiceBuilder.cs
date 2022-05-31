@@ -21,7 +21,8 @@ public static class ServiceBuilder
         
         serviceCollection.AddOptions();
         serviceCollection.AddScoped<IOrganizationService, OrganizationService>();
-        serviceCollection.AddScoped<IDynamoDbWriterService, DynamoDbWriterService>();
+        serviceCollection.AddScoped<ICreateOrganizationService, CreateOrganizationService>();
+        serviceCollection.AddScoped<IDynamoDbAccessService, DynamoDbAccessService>();
         
         AddConfigurationOptions(serviceCollection, configurationOptions);
     }
