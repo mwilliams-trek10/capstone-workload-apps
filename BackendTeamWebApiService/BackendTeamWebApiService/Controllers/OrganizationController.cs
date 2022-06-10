@@ -88,7 +88,7 @@ public sealed class OrganizationController : ControllerBase
     /// Gets all scrum organizations.
     /// </summary>
     /// <returns>Ok Http Status code if successful.</returns>
-    [HttpPost]
+    [HttpGet]
     [ProducesResponseType(typeof(List<Organization>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAllScrumOrganizationsAsync()

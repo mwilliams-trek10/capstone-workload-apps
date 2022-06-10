@@ -34,8 +34,7 @@ internal sealed class OrganizationService : IOrganizationService
     public async Task CreateScrumOrganizationAsync(AddOrganizationArgs addOrganizationArgs)
     {
         IOrganization newOrganization = await this._createOrganizationService.CreateScrumTeamOrganizationAsync(addOrganizationArgs);
-        
-        
+        await this._dynamoDbAccessService.WriteOrganizationToDynamoDbAsync(newOrganization);
     }
 
     private async Task WriteOrganizationToDynamoDb(IOrganization organization)
@@ -64,22 +63,24 @@ internal sealed class OrganizationService : IOrganizationService
     /// <inheritdoc cref="IOrganizationService"/>
     public async Task<List<Organization>> GetAllOrganizationsAsync()
     {
-        Organization organization = new Organization
-        {
-            Id = Guid.NewGuid(),
-            Name = "Organization-1"
-        };
-        
-        Organization organizationSecond = new Organization
-        {
-            Id = Guid.NewGuid(),
-            Name = "Organization-2"
-        };
+        // Organization organization = new Organization
+        // {
+        //     Id = Guid.NewGuid(),
+        //     Name = "Organization-1"
+        // };
+        //
+        // Organization organizationSecond = new Organization
+        // {
+        //     Id = Guid.NewGuid(),
+        //     Name = "Organization-2"
+        // };
+        //
+        // return await Task.FromResult(new List<Organization>
+        // {
+        //     organization,
+        //     organizationSecond
+        // });
 
-        return await Task.FromResult(new List<Organization>
-        {
-            organization,
-            organizationSecond
-        });
+        return await _dynamoDbAccessService.GetAllOrganizations();
     }
 }

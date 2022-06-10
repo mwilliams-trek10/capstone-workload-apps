@@ -7,9 +7,16 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ScrumOrganizationService>();
 
-builder.Services.AddHttpClient("BackendService", httpClient =>
+string backendServiceUri = Environment.GetEnvironmentVariable("BACKEND_SERVICE_URI") ?? throw new ApplicationException("BACKEND_SERVICE_URI not found!");
+
+builder.Services.AddHttpClient("AddScrumOrganization", httpClient =>
 {
-    httpClient.BaseAddress = new Uri("http://127.0.0.1:12345/api/sampleservice");
+    httpClient.BaseAddress = new Uri($"{backendServiceUri}/api/organization/addneworganization");
+});
+
+builder.Services.AddHttpClient("GetAllScrumOrganizationsAsync", httpClient =>
+{
+    httpClient.BaseAddress = new Uri($"{backendServiceUri}/api/organization/getallscrumorganizations");
 });
 
 var app = builder.Build();
