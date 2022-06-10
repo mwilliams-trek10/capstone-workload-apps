@@ -66,9 +66,11 @@ public static class ServiceBuilder
             //     Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"),
             //     Environment.GetEnvironmentVariable("AWS_SESSION_TOKEN"));
 
-            BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
-                Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),
-                Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"));
+            // BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
+            //     Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),
+            //     Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"));
+            
+            AssumeRoleWithWebIdentityCredentials awsCredentials = AssumeRoleWithWebIdentityCredentials.FromEnvironmentVariables();
             
             var client = new AmazonDynamoDBClient(awsCredentials, RegionEndpoint.USEast2);
             return Options.Create(options: client);
