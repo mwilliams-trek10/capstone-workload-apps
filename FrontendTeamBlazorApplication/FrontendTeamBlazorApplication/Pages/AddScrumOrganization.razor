@@ -1,4 +1,4 @@
-@page "/addorganization"
+@page "/addscrumorganization"
 @using FrontendTeamBlazorApplication.Models
 @using System.ComponentModel.DataAnnotations
 @using FrontendTeamBlazorApplication.Services
@@ -9,7 +9,7 @@
 
 <!DOCTYPE html>
 
-<h1>Add a Brand New Organization!</h1>
+<h1>Add a Brand New Scrum Organization!</h1>
 
 <br/>
 
@@ -18,16 +18,16 @@
   
   <div class="add-boxes">
     <p>
-      <label class="input-label">Organization Name:</label>
-      <InputText @bind-Value=Organization.Name id="Name"/>
+      <label class="input-label">ScrumOrganization Name:</label>
+      <InputText @bind-Value=ScrumOrganization.Name id="Name"/>
     </p>
     <p>
       <label class="input-label">Employee Count:</label>
-      <InputNumber @bind-Value="Organization.TeamMemberCount "/>
+      <InputNumber @bind-Value="ScrumOrganization.TeamMemberCount "/>
     </p>
     <p>
       <label class="input-label">Scrum Team Count:</label>
-      <InputNumber @bind-Value="Organization.ScrumTeamCount"/>
+      <InputNumber @bind-Value="ScrumOrganization.ScrumTeamCount"/>
     </p>
   </div>
   
@@ -49,7 +49,7 @@
   @if (_saveSuccessful)
   {
     <div class="row bg-success text-white" style="margin-top:10px; height:40px">
-      <label class="p-2">Organization successfully saved...</label>
+      <label class="p-2">ScrumOrganization successfully saved...</label>
     </div>
   }
   
@@ -83,16 +83,16 @@
   private EditContext _editContext;
   
   [Required]
-  private Organization Organization { get; } = new();
+  private ScrumOrganization ScrumOrganization { get; } = new();
 
   protected override void OnInitialized()
   {
-    _editContext = new(Organization);
+    _editContext = new(ScrumOrganization);
   }
 
   private async Task OnValidSubmit(EditContext context)
   {
-    if (context.Model is not Organization organization)
+    if (context.Model is not ScrumOrganization organization)
     {
       return;
     }
@@ -107,17 +107,11 @@
     _addOrganizationDisabled = true;
   }
 
-  private void SetFormOnSuccessfulSave()
-  {
-    _saveSuccessful = true;
-    _savingLabel = "Data Saved";
-  }
-
-  private async Task SaveNewOrganization(Organization organization)
+  private async Task SaveNewOrganization(ScrumOrganization scrumOrganization)
   {
     try
     {
-      await ScrumOrganizationService.AddScrumOrganization(organization);
+      await ScrumOrganizationService.AddScrumOrganization(scrumOrganization);
       //SetFormOnSuccessfulSave();
       NavigationManager.NavigateTo("/vieworganizations/1", true);
     }

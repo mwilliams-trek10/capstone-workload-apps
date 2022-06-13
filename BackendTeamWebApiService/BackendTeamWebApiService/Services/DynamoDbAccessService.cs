@@ -54,14 +54,14 @@ internal sealed class DynamoDbAccessService : IDynamoDbAccessService
     {
         try
         {
-            ScanRequest request = new ScanRequest()
+            ScanRequest request = new ScanRequest
             {
                 TableName = "mcw-capstone-project",
                 AttributesToGet = {"Id", "Name"}
             };
             var response = await _amazonDynamoDbClient.ScanAsync(request);
 
-            return ConvertResponseToOrganizations(response);
+            return ConvertResponseToOrganizations(response.Items);
         }
         catch (Exception ex)
         {
@@ -71,11 +71,69 @@ internal sealed class DynamoDbAccessService : IDynamoDbAccessService
         }
     }
 
-    private List<Organization> ConvertResponseToOrganizations(ScanResponse response)
+    public async Task<Organization> GetScrumOrganizationByIdAsync(Guid id)
+    {
+        try
+        {
+            GetItemRequest request = new GetItemRequest
+            {
+                TableName = "mcw-capstone-project",
+                AttributesToGet = {"Id", "Name"},
+                //FilterExpression = "Id=:id",
+                // KeyConditionExpression = "",
+                Key = 
+                {
+                    {"Id", new AttributeValue(id.ToString())}
+                }
+            };
+            var response = await _amazonDynamoDbClient.GetItemAsync(request);
+
+            List<Organization> organizations = ConvertResponseToOrganizations(new List<Dictionary<string, AttributeValue>> {response.Item });
+            return organizations.First();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            _logger.LogError(ex.StackTrace);
+            throw;
+        }
+    }
+
+    public async Task UpdateExistingOrganization(UpdateScrumOrganizationArgs updateScrumOrganizationArgs)
+    {
+        UpdateItemRequest updateItemRequest = new UpdateItemRequest
+        {
+            TableName = "mcw-capstone-project",
+            Key = new Dictionary<string, AttributeValue>
+            {
+                {"Id", new AttributeValue
+                {
+                    S = updateScrumOrganizationArgs.Id.ToString()
+                }}
+            },
+            UpdateExpression = "set #nm = :nval",
+            ExpressionAttributeNames = new Dictionary<string, string>
+            {
+                {"#nm", "Name"}
+            },
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                {":nval", new AttributeValue{ S =updateScrumOrganizationArgs.Name }}
+            }
+        };
+        
+        _logger.LogInformation(updateItemRequest.TableName);
+        _logger.LogInformation(updateItemRequest.Key.First().ToString());
+        _logger.LogInformation(updateItemRequest.UpdateExpression);
+
+        await _amazonDynamoDbClient.UpdateItemAsync(updateItemRequest);
+    }
+
+    private List<Organization> ConvertResponseToOrganizations(List<Dictionary<string, AttributeValue>> responseItems)
     {
         List<Organization> organizations = new List<Organization>();
 
-        foreach (Dictionary<string, AttributeValue> item in response.Items)
+        foreach (Dictionary<string, AttributeValue> item in responseItems)
         {
             organizations.Add(ConvertDictionaryAttributesToOrganization(item));
         }

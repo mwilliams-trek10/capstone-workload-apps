@@ -30,12 +30,14 @@ public static class DictionaryExtensionMethods
     /// <returns>A zero left-padded string.</returns>
     public static string GetZeroLeftPaddedNumber(this int id, int stringLength)
     {
-        StringBuilder stringBuilder = new StringBuilder(id);
+        StringBuilder stringBuilder = new StringBuilder(id.ToString());
 
-        while (stringBuilder.Length < stringLength)
-        {
-            stringBuilder.Append('0', 0);
-        }
+        int repeatCount = stringLength - id.ToString().Length;
+
+        //while (stringBuilder.Length < stringLength)
+        //{
+            stringBuilder.Insert(0, "0", repeatCount);
+        //}
 
         return stringBuilder.ToString();
     }

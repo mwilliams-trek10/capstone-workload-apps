@@ -14,5 +14,5 @@ public interface ICreateOrganizationService
     /// <see cref="Task{TResult}"/>
     /// <see cref="IOrganization"/>
     /// </returns>
-    Task<IOrganization> CreateScrumTeamOrganizationAsync(AddOrganizationArgs addOrganizationArgs);
+    Task<IOrganization> CreateScrumTeamOrganizationAsync(AddScrumOrganizationArgs addScrumOrganizationArgs);
 }

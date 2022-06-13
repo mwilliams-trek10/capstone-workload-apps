@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 /// <summary>
 /// Update Organization Args
 /// </summary>
-public sealed class UpdateOrganizationArgs
+public sealed class UpdateScrumOrganizationArgs
 {
     /// <summary>
     /// Gets or sets the Id
@@ -16,5 +16,6 @@ public sealed class UpdateOrganizationArgs
     /// <summary>
     /// Gets or sets the Name
     /// </summary>
+    [Required]
     public string Name { get; set; }
 }

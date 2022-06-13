@@ -1,28 +1,43 @@
-@page "/editorganization/{ScrumOrganizationId}"
+@page "/editscrumorganization/{ScrumOrganizationId}"
 @using FrontendTeamBlazorApplication.Models
 @using FrontendTeamBlazorApplication.Services
 
 @inject NavigationManager NavigationManager
 @inject ScrumOrganizationService ScrumOrganizationService;
 
-<h3>Edit Organization</h3>
+<h3>Edit Scrum Organization</h3>
 
 @if (string.IsNullOrEmpty(ScrumOrganizationId))
 {
     <p>
-        <em>Unable to locate scrum organization!</em>
+        <em>Unable to locate scrum scrumOrganization!</em>
+    </p>
+}
+else if (this.ScrumOrganization is null)
+{
+    <p>
+        <em>Loading...</em>
     </p>
 }
 else
 {
-    <EditForm Model="Organization" OnSubmit="OnSubmit">
+    <EditForm EditContext="_editContext" OnValidSubmit=@OnValidSubmit OnInvalidSubmit=@OnInvalidSubmit >
         <DataAnnotationsValidator />
         <div class="add-boxes">
             <p>
-                <label class="input-label">Organization Name:</label>
-                <InputText @bind-Value=Organization.Name id="Name"/>
+                <label class="input-label">ScrumOrganization Name:</label>
+                <InputText @bind-Value=ScrumOrganization.Name id="Name"/>
             </p>
         </div>
+        
+        @if (_displayValidationMessages)
+          {
+            <div class="col-md-4" style="margin-top:10px">
+              <label hidden="@_hideValidationMessagesLabel">Validation Messages: </label>
+              <ValidationSummary />
+            </div>
+          }
+        
         <div>
             <p>
                 <input type="submit" value="Submit" class="btn btn-primary" disabled="@_submitDisabled"/>
@@ -31,7 +46,6 @@ else
         </div>
     </EditForm>
 }
-
 
 
 @code {
@@ -44,25 +58,47 @@ else
     
     private bool _displayValidationMessages;
 
-    private Organization Organization { get; set; }
+    private EditScrumOrganization ScrumOrganization { get; set; }
 
-    Dictionary<string, object> _savingLabelAttributes = new Dictionary<string, object>();
+    private EditContext _editContext;
+  
+    private bool _hideValidationMessagesLabel = true;
 
     protected override async Task OnInitializedAsync()
     {
         Guid id = Guid.Parse(ScrumOrganizationId);
-        Organization = await ScrumOrganizationService.GetScrumOrganizationsByIdAsync(id);
+        var organization = await ScrumOrganizationService.GetScrumOrganizationByIdAsync(id);
+        ScrumOrganization = new EditScrumOrganization(organization);
+        _editContext = new(ScrumOrganization);
     }
 
-    private async Task OnSubmit()
+    private async Task OnValidSubmit(EditContext context)
     {
         _submitDisabled = true;
         _savingHidden = false;
         StateHasChanged();
         
-        await Task.Delay(3000);
+        if (context.Model is not EditScrumOrganization scrumOrganization)
+        {
+            return;
+        }
+        // SetFormForSaving();
+        
+        await ScrumOrganizationService.UpdateScrumOrganization(scrumOrganization);
 
         NavigationManager.NavigateTo("/vieworganizations", true);
+    }
+    
+    private async Task OnInvalidSubmit(EditContext editContext)
+    {
+        _displayValidationMessages = true;
+        _hideValidationMessagesLabel = false;
+        _editContext.OnFieldChanged += HideValidationMessageLabel;
+    }
+
+    private void HideValidationMessageLabel(object? obj, FieldChangedEventArgs args)
+    {
+        _hideValidationMessagesLabel = _editContext.Validate();
     }
   
 }

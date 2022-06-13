@@ -1,28 +1,27 @@
-using BackendTeamWebApiService.Utilities;
-
 namespace BackendTeamWebApiService.Services;
 
 using Amazon.DynamoDBv2.Model;
 using Models;
+using Utilities;
 
 /// <summary>
 /// Organization Service
 /// </summary>
-internal sealed class OrganizationService : IOrganizationService
+internal sealed class ScrumOrganizationService : IScrumOrganizationService
 {
-    private readonly ILogger<OrganizationService> _logger;
+    private readonly ILogger<ScrumOrganizationService> _logger;
 
     private readonly ICreateOrganizationService _createOrganizationService;
 
     private readonly IDynamoDbAccessService _dynamoDbAccessService;
 
     /// <summary>
-    /// Initializes an instance of <see cref="OrganizationService"/>
+    /// Initializes an instance of <see cref="ScrumOrganizationService"/>
     /// </summary>
     /// <param name="logger">Organization Service logger</param>
     /// <param name="createOrganizationService">Create organization process</param>
     /// <param name="dynamoDbAccessService">Dynamo DB Access Service.</param>
-    public OrganizationService(ILogger<OrganizationService> logger,
+    public ScrumOrganizationService(ILogger<ScrumOrganizationService> logger,
         ICreateOrganizationService createOrganizationService,
         IDynamoDbAccessService dynamoDbAccessService)
     {
@@ -31,9 +30,9 @@ internal sealed class OrganizationService : IOrganizationService
         _dynamoDbAccessService = dynamoDbAccessService;
     }
 
-    public async Task CreateScrumOrganizationAsync(AddOrganizationArgs addOrganizationArgs)
+    public async Task CreateScrumOrganizationAsync(AddScrumOrganizationArgs addScrumOrganizationArgs)
     {
-        IOrganization newOrganization = await this._createOrganizationService.CreateScrumTeamOrganizationAsync(addOrganizationArgs);
+        IOrganization newOrganization = await this._createOrganizationService.CreateScrumTeamOrganizationAsync(addScrumOrganizationArgs);
         await this._dynamoDbAccessService.WriteOrganizationToDynamoDbAsync(newOrganization);
     }
 
@@ -54,13 +53,13 @@ internal sealed class OrganizationService : IOrganizationService
         return teamMemberToWrite;
     }
 
-    /// <inheritdoc cref="IOrganizationService"/>
+    /// <inheritdoc cref="IScrumOrganizationService"/>
     public bool Ping()
     {
         return true;
     }
 
-    /// <inheritdoc cref="IOrganizationService"/>
+    /// <inheritdoc cref="IScrumOrganizationService"/>
     public async Task<List<Organization>> GetAllOrganizationsAsync()
     {
         // Organization organization = new Organization
@@ -82,5 +81,17 @@ internal sealed class OrganizationService : IOrganizationService
         // });
 
         return await _dynamoDbAccessService.GetAllOrganizations();
+    }
+
+    /// <inheritdoc cref="IScrumOrganizationService"/>
+    public async Task<Organization> GetScrumOrganizationByIdAsync(Guid id)
+    {
+        return await _dynamoDbAccessService.GetScrumOrganizationByIdAsync(id);
+    }
+
+    /// <inheritdoc cref="IScrumOrganizationService"/>
+    public async Task UpdateScrumOrganizationAsync(UpdateScrumOrganizationArgs updateScrumOrganizationArgs)
+    {
+        await _dynamoDbAccessService.UpdateExistingOrganization(updateScrumOrganizationArgs);
     }
 }

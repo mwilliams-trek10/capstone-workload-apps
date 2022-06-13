@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 /// <summary>
 /// Add Organization Args
 /// </summary>
-public sealed class AddOrganizationArgs
+public sealed class AddScrumOrganizationArgs
 {
     /// <summary>
     /// Gets or sets the Name

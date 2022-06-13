@@ -21,6 +21,11 @@ public class Team
     public Guid OrganizationId { get; set; }
 
     /// <summary>
+    /// Gets or sets the Scrum Master Id
+    /// </summary>
+    public Guid ScrumMasterId { get; set; }
+
+    /// <summary>
     /// Gets or sets the Team Name
     /// </summary>
     public string TeamName { get; set; }

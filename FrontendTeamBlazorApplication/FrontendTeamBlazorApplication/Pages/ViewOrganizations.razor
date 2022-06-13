@@ -15,7 +15,7 @@
     </div>
 }
 
-@if (_organizations == null)
+@if (_scrumOrganizations == null)
 {
     <p>
         <em>Loading...</em>
@@ -26,18 +26,19 @@ else
     <table class="table">
         <thead>
         <tr>
-            <th>Organization Name</th>
+            <th>ScrumOrganization Name</th>
             <th>Id</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var organization in _organizations)
+        @foreach (var organization in _scrumOrganizations)
         {
             <tr>
                 <td>@organization.Name</td>
                 <td>@organization.Id</td>
-                <td><a href="/editorganization/@organization.Id.ToString()">Edit</a></td>
+                @* <td><a href="/editorganization/@scrumOrganization.Id.ToString()">Edit</a></td> *@
+                <td><input type="button" value="Edit" class="btn btn-link" @onclick="@(() => EditScrumOrganizationButtonClick(@organization))" /></td>
             </tr>
         }
         </tbody>
@@ -45,7 +46,7 @@ else
     
     <div>
         <p>
-            <input type="submit" value="Add Organization" class="btn btn-primary" @onclick="@AddNewOrganizationButtonClick">
+            <input type="submit" value="Add ScrumOrganization" class="btn btn-primary" @onclick="@AddNewOrganizationButtonClick">
         </p>
     </div>
 }
@@ -54,7 +55,7 @@ else
 
     private bool _hideMessage = true;
 
-    private Dictionary<int, string> _messages = new Dictionary<int, string> 
+    private readonly Dictionary<int, string> _messages = new() 
     {
         {1, "Save successful"}
     };
@@ -62,11 +63,11 @@ else
     [Parameter]
     public int? MessageId { get; set; }
 
-    private List<Organization> _organizations;
+    private List<ScrumOrganization> _scrumOrganizations;
 
     protected override async Task OnInitializedAsync()
     {
-        _organizations = await ScrumOrganizationService.GetAllScrumOrganizationsAsync();
+        _scrumOrganizations = await ScrumOrganizationService.GetAllScrumOrganizationsAsync();
 
         if (IsMessageValid())
         {
@@ -75,10 +76,15 @@ else
         }
     }
 
+    private void EditScrumOrganizationButtonClick(ScrumOrganization scrumOrganization)
+    {
+        NavigationManager.NavigateTo($"/editscrumorganization/{scrumOrganization.Id}", true);
+    }
+
     private void AddNewOrganizationButtonClick()
     {
-        _organizations = null;
-        NavigationManager.NavigateTo("/addorganization", true);
+        _scrumOrganizations = null;
+        NavigationManager.NavigateTo("/addscrumorganization", true);
     }
 
     private bool IsMessageValid()

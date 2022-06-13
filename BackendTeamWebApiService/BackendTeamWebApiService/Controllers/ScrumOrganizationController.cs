@@ -11,20 +11,20 @@ using Swashbuckle.AspNetCore.Annotations;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [Produces("application/json")]
-public sealed class OrganizationController : ControllerBase
+public sealed class ScrumOrganizationController : ControllerBase
 {
-    private readonly IOrganizationService _organizationService;
+    private readonly IScrumOrganizationService _scrumOrganizationService;
 
-    private readonly ILogger<OrganizationController> _logger;
+    private readonly ILogger<ScrumOrganizationController> _logger;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="OrganizationController"/>
+    /// Initializes a new instance of <see cref="ScrumOrganizationController"/>
     /// </summary>
-    /// <param name="organizationService">The organization service.</param>
+    /// <param name="scrumOrganizationService">The organization service.</param>
     /// <param name="logger">The logger.</param>
-    public OrganizationController(IOrganizationService organizationService, ILogger<OrganizationController> logger)
+    public ScrumOrganizationController(IScrumOrganizationService scrumOrganizationService, ILogger<ScrumOrganizationController> logger)
     {
-        _organizationService = organizationService;
+        _scrumOrganizationService = scrumOrganizationService;
         _logger = logger;
     }
     
@@ -37,23 +37,23 @@ public sealed class OrganizationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public bool Ping()
     {
-        return _organizationService.Ping();
+        return _scrumOrganizationService.Ping();
     }
 
     /// <summary>
     /// Adds a new organization.
     /// </summary>
-    /// <param name="addOrganizationArgs"></param>
+    /// <param name="addScrumOrganizationArgs"></param>
     /// <returns>Ok Http Status code if successful.</returns>
     [HttpPost]
     [SwaggerOperation("AddNewOrganization")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddNewOrganizationAsync([FromBody] AddOrganizationArgs addOrganizationArgs)
+    public async Task<IActionResult> AddNewScrumOrganizationAsync([FromBody] AddScrumOrganizationArgs addScrumOrganizationArgs)
     {
         try
         {
-            await _organizationService.CreateScrumOrganizationAsync(addOrganizationArgs);
+            await _scrumOrganizationService.CreateScrumOrganizationAsync(addScrumOrganizationArgs);
             return this.Ok();
         }
         catch (Exception ex)
@@ -66,15 +66,16 @@ public sealed class OrganizationController : ControllerBase
     /// <summary>
     /// Updates an existing organization.
     /// </summary>
-    /// <param name="updateOrganizationArgs"></param>
+    /// <param name="updateScrumOrganizationArgs"></param>
     /// <returns>Ok Http Status code if successful.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateOrganizationAsync([FromBody] UpdateOrganizationArgs updateOrganizationArgs)
+    public async Task<IActionResult> UpdateScrumOrganizationAsync([FromBody] UpdateScrumOrganizationArgs updateScrumOrganizationArgs)
     {
         try
         {
+            await _scrumOrganizationService.UpdateScrumOrganizationAsync(updateScrumOrganizationArgs);
             return this.Ok();
         }
         catch (Exception ex)
@@ -95,8 +96,30 @@ public sealed class OrganizationController : ControllerBase
     {
         try
         {
-            List<Organization> organizations = await _organizationService.GetAllOrganizationsAsync();
+            List<Organization> organizations = await _scrumOrganizationService.GetAllOrganizationsAsync();
             return this.Ok(organizations);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            throw;
+        }
+    }
+    
+    /// <summary>
+    /// Gets scrum organization by id..
+    /// </summary>
+    /// <returns>Ok Http Status code if successful.</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(List<Organization>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetScrumOrganizationByIdAsync([FromHeader] string guid)
+    {
+        try
+        {
+            Guid id = Guid.Parse(guid);
+            Organization organization = await _scrumOrganizationService.GetScrumOrganizationByIdAsync(id);
+            return this.Ok(organization);
         }
         catch (Exception ex)
         {

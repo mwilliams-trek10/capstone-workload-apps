@@ -2,7 +2,7 @@ namespace FrontendTeamBlazorApplication.Models;
 
 using System.ComponentModel.DataAnnotations;
 
-public sealed class Organization
+public sealed class ScrumOrganization
 {
     /// <summary>
     /// Gets or sets the Id.

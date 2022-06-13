@@ -14,34 +14,31 @@ public sealed class ScrumOrganizationService
         _logger = logger;
     }
     
-    public async Task AddScrumOrganization(Organization organization)
+    public async Task AddScrumOrganization(ScrumOrganization scrumOrganization)
     {
         using HttpClient httpClient = _httpClientFactory.CreateClient("AddScrumOrganization");
-        //var response = await httpClient.GetAsync("http://127.0.0.1:12400/api/organization/ping");
 
-        var httpContent = JsonContent.Create(organization); //GetOrganizationToAddAsHttpContent(organization);
+        var httpContent = JsonContent.Create(scrumOrganization);
 
         var response = await httpClient.PostAsync(httpClient.BaseAddress, httpContent);
         
-        //var response = await httpClient.GetAsync("http://127.0.0.1:12400/api/organization/ping");
         response.EnsureSuccessStatusCode();
     }
 
-    private HttpContent GetOrganizationToAddAsHttpContent(Organization organization)
+    public async Task<ScrumOrganization> GetScrumOrganizationByIdAsync(Guid id)
     {
-        return JsonContent.Create(organization);
-    }
+        using HttpClient httpClient = _httpClientFactory.CreateClient("GetScrumOrganizationByIdAsync");
+        httpClient.DefaultRequestHeaders.Add("guid", id.ToString());
 
-    public async Task<Organization> GetScrumOrganizationsByIdAsync(Guid id)
-    {
-        return new Organization
-        {
-            Id = id,
-            Name = "Get-Organization"
-        };
+        var response = await httpClient.GetAsync(httpClient.BaseAddress);
+        response.EnsureSuccessStatusCode();
+        
+        var result = await response.Content.ReadFromJsonAsync<ScrumOrganization>();
+
+        return result ?? new ScrumOrganization();
     }
     
-    public async Task<List<Organization>> GetAllScrumOrganizationsAsync()
+    public async Task<List<ScrumOrganization>> GetAllScrumOrganizationsAsync()
     {
         using HttpClient httpClient = _httpClientFactory.CreateClient("GetAllScrumOrganizationsAsync");
 
@@ -50,26 +47,19 @@ public sealed class ScrumOrganizationService
         var response = await httpClient.GetAsync(httpClient.BaseAddress);
         response.EnsureSuccessStatusCode();
         
-        var results = await response.Content.ReadFromJsonAsync<List<Organization>>();
+        var results = await response.Content.ReadFromJsonAsync<List<ScrumOrganization>>();
         
-        return results ?? new List<Organization>();
+        return results ?? new List<ScrumOrganization>();
+    }
+    
+    public async Task UpdateScrumOrganization(EditScrumOrganization scrumOrganization)
+    {
+        using HttpClient httpClient = _httpClientFactory.CreateClient("UpdateScrumOrganizationAsync");
+
+        var httpContent = JsonContent.Create(scrumOrganization);
+
+        var response = await httpClient.PostAsync(httpClient.BaseAddress, httpContent);
         
-        // Organization organization = new Organization
-        // {
-        //     Id = Guid.NewGuid(),
-        //     Name = "Organization-1"
-        // };
-        //
-        // Organization organizationSecond = new Organization
-        // {
-        //     Id = Guid.NewGuid(),
-        //     Name = "Organization-2"
-        // };
-        //
-        // return await Task.FromResult(new List<Organization>
-        // {
-        //     organization,
-        //     organizationSecond
-        // });
+        response.EnsureSuccessStatusCode();
     }
 }

@@ -14,4 +14,9 @@ public sealed class ConfigurationOptions
     /// Gets or sets the IsDevelopment flag
     /// </summary>
     public bool IsDevelopment { get; set; }
+
+    /// <summary>
+    /// Gets or sets the use web token property.
+    /// </summary>
+    public bool UseWebToken { get; set; }
 }

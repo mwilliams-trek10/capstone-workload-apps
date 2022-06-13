@@ -25,7 +25,7 @@ public static class ServiceBuilder
         ConfigurationOptions configurationOptions = GetConfigurationOptions(webHostBuilderContext.Configuration);
         
         serviceCollection.AddOptions();
-        serviceCollection.AddScoped<IOrganizationService, OrganizationService>();
+        serviceCollection.AddScoped<IScrumOrganizationService, ScrumOrganizationService>();
         serviceCollection.AddScoped<ICreateOrganizationService, CreateOrganizationService>();
         serviceCollection.AddScoped<IDynamoDbAccessService, DynamoDbAccessService>();
         
@@ -49,42 +49,39 @@ public static class ServiceBuilder
 
     private static void RegisterAmazonDynamoDbClient(IServiceCollection services, ConfigurationOptions configurationOptions)
     {
-        if (configurationOptions.IsDevelopment)
+        if (configurationOptions.UseWebToken)
         {
-            RegisterAmazonDynamoDbClientFromEnvironmentVariables(services);
+            RegisterAmazonDynamoDbClientUsingWebToken(services);
             return;
         }
 
-        RegisterAmazonDynamoDbClientForRegion(services, configurationOptions);
+        RegisterAmazonDynamoDbClientUsingBasicCredentials(services);
     }
     
-    private static void RegisterAmazonDynamoDbClientFromEnvironmentVariables(IServiceCollection services)
+    private static void RegisterAmazonDynamoDbClientUsingWebToken(IServiceCollection services)
+    {
+        AssumeRoleWithWebIdentityCredentials awsCredentials = AssumeRoleWithWebIdentityCredentials.FromEnvironmentVariables();
+        CreateAmazonDynamoDbClient(services, awsCredentials);
+    }
+
+    private static void CreateAmazonDynamoDbClient(IServiceCollection services, AWSCredentials awsCredentials)
     {
         services.AddSingleton(p =>
         {
             // SessionAWSCredentials awsCredentials = new SessionAWSCredentials(Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),
             //     Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"),
             //     Environment.GetEnvironmentVariable("AWS_SESSION_TOKEN"));
-
-            // BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
-            //     Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),
-            //     Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"));
-            
-            AssumeRoleWithWebIdentityCredentials awsCredentials = AssumeRoleWithWebIdentityCredentials.FromEnvironmentVariables();
-            
             var client = new AmazonDynamoDBClient(awsCredentials, RegionEndpoint.USEast2);
             return Options.Create(options: client);
         });
     }
 
-    private static void RegisterAmazonDynamoDbClientForRegion(IServiceCollection services, ConfigurationOptions configurationOptions)
+    private static void RegisterAmazonDynamoDbClientUsingBasicCredentials(IServiceCollection services)
     {
-        services.AddSingleton(serviceProvider =>
-        {
-            var region = RegionEndpoint.EnumerableAllRegions.First(regionEndpoint =>
-                regionEndpoint.DisplayName.Equals(configurationOptions.Region, StringComparison.InvariantCultureIgnoreCase));
-            var client = new AmazonDynamoDBClient(region);
-            return Options.Create(options: client);
-        });
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
+            Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),
+            Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"));
+        
+        CreateAmazonDynamoDbClient(services, awsCredentials);
     }
 }

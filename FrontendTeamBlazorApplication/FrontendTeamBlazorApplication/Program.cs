@@ -1,3 +1,4 @@
+using FrontendTeamBlazorApplication;
 using FrontendTeamBlazorApplication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,19 +8,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ScrumOrganizationService>();
 
-string backendServiceUri = Environment.GetEnvironmentVariable("BACKEND_SERVICE_URI") ?? throw new ApplicationException("BACKEND_SERVICE_URI not found!");
+HttpClientRegistrations.RegisterHttpClients(builder);
 
-builder.Services.AddHttpClient("AddScrumOrganization", httpClient =>
-{
-    httpClient.BaseAddress = new Uri($"{backendServiceUri}/api/organization/addneworganization");
-});
-
-builder.Services.AddHttpClient("GetAllScrumOrganizationsAsync", httpClient =>
-{
-    httpClient.BaseAddress = new Uri($"{backendServiceUri}/api/organization/getallscrumorganizations");
-});
-
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
