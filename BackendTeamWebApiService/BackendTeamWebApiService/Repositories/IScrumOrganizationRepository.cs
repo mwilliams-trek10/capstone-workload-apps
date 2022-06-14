@@ -1,11 +1,11 @@
-namespace BackendTeamWebApiService.Services;
+using BackendTeamWebApiService.Models;
 
-using Models;
+namespace BackendTeamWebApiService.Repositories;
 
 /// <summary>
 /// Dynamo DB Access Service
 /// </summary>
-public interface IDynamoDbAccessService
+public interface IScrumOrganizationRepository
 {
     /// <summary>
     /// Write an organization to Dynamo Db.

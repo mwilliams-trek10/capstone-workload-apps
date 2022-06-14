@@ -14,6 +14,11 @@ public interface IPerson
     /// Gets or sets the Organization Employee Number
     /// </summary>
     public string OrganizationEmployeeNumber { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the Organization Id
+    /// </summary>
+    Guid OrganizationId { get; set; }
 
     /// <summary>
     /// Gets or sets the First Name

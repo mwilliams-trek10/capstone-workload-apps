@@ -10,13 +10,13 @@ internal sealed class CreateOrganizationService : ICreateOrganizationService
 {
     private readonly string _alphabet = "abcdefghijklmnopqrstuvwxyz";
     
-    private AddScrumOrganizationArgs _addScrumOrganizationArgs;
+    private AddScrumOrganizationArgs _addScrumOrganizationArgs = null!;
 
     private readonly Organization _organization;
 
     private readonly Random _random;
 
-    private static int universalCount;
+    private static int _universalCount;
 
     public CreateOrganizationService()
     {
@@ -167,6 +167,7 @@ internal sealed class CreateOrganizationService : ICreateOrganizationService
         {
             Id = Guid.NewGuid(),
             OrganizationEmployeeNumber = $"EMP{i.GetZeroLeftPaddedNumber(6)}",
+            OrganizationId = _organization.Id,
             FirstName = GenerateName(3, 7),
             LastName = GenerateName(2, 12)
         };
@@ -179,7 +180,7 @@ internal sealed class CreateOrganizationService : ICreateOrganizationService
             int listCount = list.Capacity;
             for (int i = 0; i < listCount; i++)
             {
-                int number = Interlocked.Add(ref universalCount, 1);
+                int number = Interlocked.Add(ref _universalCount, 1);
                 T item = func(number);
                 list.Add(item);
             }

@@ -17,5 +17,5 @@ public sealed class UpdateScrumOrganizationArgs
     /// Gets or sets the Name
     /// </summary>
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 }

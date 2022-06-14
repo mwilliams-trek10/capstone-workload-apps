@@ -11,7 +11,7 @@ public sealed class AddScrumOrganizationArgs
     /// Gets or sets the Name
     /// </summary>
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the Employee Count

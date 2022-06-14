@@ -8,7 +8,7 @@ public sealed class ConfigurationOptions
     /// <summary>
     /// Gets or sets the Region
     /// </summary>
-    public string Region { get; set; }
+    public string Region { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the IsDevelopment flag

@@ -1,24 +1,19 @@
-using Amazon;
-using Amazon.Runtime;
-using Amazon.Runtime.CredentialManagement;
-using Amazon.SecurityToken;
-using Amazon.SecurityToken.Model;
-using Microsoft.Extensions.Options;
-
-namespace BackendTeamWebApiService.Services;
-
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using Models;
+using BackendTeamWebApiService.Models;
+using BackendTeamWebApiService.Services;
+using Microsoft.Extensions.Options;
 
-/// <inheritdoc cref="IDynamoDbAccessService"/>
-internal sealed class DynamoDbAccessService : IDynamoDbAccessService
+namespace BackendTeamWebApiService.Repositories;
+
+/// <inheritdoc cref="IScrumOrganizationRepository"/>
+internal sealed class ScrumOrganizationRepository : IScrumOrganizationRepository
 {
-    private readonly ILogger<DynamoDbAccessService> _logger;
+    private readonly ILogger<ScrumOrganizationRepository> _logger;
 
     private readonly AmazonDynamoDBClient _amazonDynamoDbClient;
 
-    public DynamoDbAccessService(ILogger<DynamoDbAccessService> logger,
+    public ScrumOrganizationRepository(ILogger<ScrumOrganizationRepository> logger,
         IOptions<AmazonDynamoDBClient> amazonDynamoDbClient)
     {
         _logger = logger;

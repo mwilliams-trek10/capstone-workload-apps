@@ -3,7 +3,7 @@ namespace BackendTeamWebApiService.Models;
 /// <summary>
 /// Team
 /// </summary>
-public class Team
+public sealed class Team
 {
     /// <summary>
     /// Gets or sets the Id
@@ -13,7 +13,7 @@ public class Team
     /// <summary>
     /// Gets or sets the team number
     /// </summary>
-    public string TeamNumber { get; set; }
+    public string TeamNumber { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the Organization Id
@@ -28,5 +28,5 @@ public class Team
     /// <summary>
     /// Gets or sets the Team Name
     /// </summary>
-    public string TeamName { get; set; }
+    public string TeamName { get; set; } = null!;
 }

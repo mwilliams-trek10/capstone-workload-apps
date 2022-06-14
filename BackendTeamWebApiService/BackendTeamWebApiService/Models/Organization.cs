@@ -7,18 +7,18 @@ public sealed class Organization : IOrganization
     public Guid Id { get; set; }
 
     /// <inheritdoc cref="IOrganization"/>
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <inheritdoc cref="IOrganization"/>
-    public List<Team> Teams { get; set; }
+    public List<Team> Teams { get; set; } = null!;
     
     /// <inheritdoc cref="IOrganization"/>
-    public List<TeamMember> TeamMembers { get; set; }
+    public List<TeamMember> TeamMembers { get; set; } = null!;
     
     /// <inheritdoc cref="IOrganization"/>
-    public List<Supervisor> Supervisors { get; set; }
+    public List<Supervisor> Supervisors { get; set; } = null!;
     
     /// <inheritdoc cref="IOrganization"/>
-    public List<ScrumMaster> ScrumMasters { get; set; }
+    public List<ScrumMaster> ScrumMasters { get; set; } = null!;
     
 }

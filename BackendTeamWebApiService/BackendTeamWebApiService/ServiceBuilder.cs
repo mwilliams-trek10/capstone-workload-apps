@@ -2,6 +2,7 @@ using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
+using BackendTeamWebApiService.Repositories;
 
 namespace BackendTeamWebApiService;
 
@@ -27,7 +28,10 @@ public static class ServiceBuilder
         serviceCollection.AddOptions();
         serviceCollection.AddScoped<IScrumOrganizationService, ScrumOrganizationService>();
         serviceCollection.AddScoped<ICreateOrganizationService, CreateOrganizationService>();
-        serviceCollection.AddScoped<IDynamoDbAccessService, DynamoDbAccessService>();
+        serviceCollection.AddScoped<IScrumOrganizationRepository, ScrumOrganizationRepository>();
+        serviceCollection.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+        serviceCollection.AddScoped<IPersonRepository, PersonRepository>();
+        serviceCollection.AddScoped<ITeamRepository, TeamRepository>();
         
         AddConfigurationOptions(serviceCollection, configurationOptions);
 

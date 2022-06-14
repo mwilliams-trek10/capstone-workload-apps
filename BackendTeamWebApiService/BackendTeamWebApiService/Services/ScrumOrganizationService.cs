@@ -1,8 +1,9 @@
+
+
 namespace BackendTeamWebApiService.Services;
 
-using Amazon.DynamoDBv2.Model;
 using Models;
-using Utilities;
+using Repositories;
 
 /// <summary>
 /// Organization Service
@@ -13,44 +14,47 @@ internal sealed class ScrumOrganizationService : IScrumOrganizationService
 
     private readonly ICreateOrganizationService _createOrganizationService;
 
-    private readonly IDynamoDbAccessService _dynamoDbAccessService;
+    private readonly IScrumOrganizationRepository _scrumOrganizationRepository;
+
+    private readonly IPersonRepository _personRepository;
+
+    private readonly ITeamMemberRepository _teamMemberRepository;
+    
+    private readonly ITeamRepository _teamRepository;
 
     /// <summary>
     /// Initializes an instance of <see cref="ScrumOrganizationService"/>
     /// </summary>
     /// <param name="logger">Organization Service logger</param>
     /// <param name="createOrganizationService">Create organization process</param>
-    /// <param name="dynamoDbAccessService">Dynamo DB Access Service.</param>
+    /// <param name="scrumOrganizationRepository">Scrum organization repository</param>
+    /// <param name="personRepository">Person Repository</param>
+    /// <param name="teamMemberRepository">Team Member repository</param>
+    /// <param name="teamRepository">Team repository</param>
     public ScrumOrganizationService(ILogger<ScrumOrganizationService> logger,
         ICreateOrganizationService createOrganizationService,
-        IDynamoDbAccessService dynamoDbAccessService)
+        IScrumOrganizationRepository scrumOrganizationRepository,
+        IPersonRepository personRepository,
+        ITeamMemberRepository teamMemberRepository,
+        ITeamRepository teamRepository)
     {
         _logger = logger;
         _createOrganizationService = createOrganizationService;
-        _dynamoDbAccessService = dynamoDbAccessService;
+        _scrumOrganizationRepository = scrumOrganizationRepository;
+        _personRepository = personRepository;
+        _teamMemberRepository = teamMemberRepository;
+        _teamRepository = teamRepository;
     }
 
+    /// <inheritdoc cref="IScrumOrganizationService"/>
     public async Task CreateScrumOrganizationAsync(AddScrumOrganizationArgs addScrumOrganizationArgs)
     {
         IOrganization newOrganization = await this._createOrganizationService.CreateScrumTeamOrganizationAsync(addScrumOrganizationArgs);
-        await this._dynamoDbAccessService.WriteOrganizationToDynamoDbAsync(newOrganization);
-    }
-
-    private async Task WriteOrganizationToDynamoDb(IOrganization organization)
-    {
-        
-    }
-
-    private async Task GetTeamMembersToWrite()
-    {
-        
-    }
-
-    private Dictionary<string, AttributeValue> GetTeamMember(TeamMember teamMember)
-    {
-        Dictionary<string, AttributeValue> teamMemberToWrite = new Dictionary<string, AttributeValue>();
-        teamMemberToWrite.SetPerson(teamMember);
-        return teamMemberToWrite;
+        await this._scrumOrganizationRepository.WriteOrganizationToDynamoDbAsync(newOrganization);
+        await this._personRepository.WriteListOfPersonsToDynamoDbAsync(newOrganization.Supervisors, "capstone-supervisors");
+        await this._personRepository.WriteListOfPersonsToDynamoDbAsync(newOrganization.Supervisors, "capstone-scrummasters");
+        await this._teamMemberRepository.WriteTeamMembersToDynamoDbAsync(newOrganization.TeamMembers);
+        await this._teamRepository.WriteTeamsToDynamoDbAsync(newOrganization.Teams);
     }
 
     /// <inheritdoc cref="IScrumOrganizationService"/>
@@ -62,36 +66,18 @@ internal sealed class ScrumOrganizationService : IScrumOrganizationService
     /// <inheritdoc cref="IScrumOrganizationService"/>
     public async Task<List<Organization>> GetAllOrganizationsAsync()
     {
-        // Organization organization = new Organization
-        // {
-        //     Id = Guid.NewGuid(),
-        //     Name = "Organization-1"
-        // };
-        //
-        // Organization organizationSecond = new Organization
-        // {
-        //     Id = Guid.NewGuid(),
-        //     Name = "Organization-2"
-        // };
-        //
-        // return await Task.FromResult(new List<Organization>
-        // {
-        //     organization,
-        //     organizationSecond
-        // });
-
-        return await _dynamoDbAccessService.GetAllOrganizations();
+        return await _scrumOrganizationRepository.GetAllOrganizations();
     }
 
     /// <inheritdoc cref="IScrumOrganizationService"/>
     public async Task<Organization> GetScrumOrganizationByIdAsync(Guid id)
     {
-        return await _dynamoDbAccessService.GetScrumOrganizationByIdAsync(id);
+        return await _scrumOrganizationRepository.GetScrumOrganizationByIdAsync(id);
     }
 
     /// <inheritdoc cref="IScrumOrganizationService"/>
     public async Task UpdateScrumOrganizationAsync(UpdateScrumOrganizationArgs updateScrumOrganizationArgs)
     {
-        await _dynamoDbAccessService.UpdateExistingOrganization(updateScrumOrganizationArgs);
+        await _scrumOrganizationRepository.UpdateExistingOrganization(updateScrumOrganizationArgs);
     }
 }
