@@ -7,4 +7,10 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Organization\AddScrumOrganization.razor" />
+      <AdditionalFiles Include="Pages\Organization\EditOrganization.razor" />
+      <AdditionalFiles Include="Pages\Organization\ViewOrganizations.razor" />
+    </ItemGroup>
+
 </Project>

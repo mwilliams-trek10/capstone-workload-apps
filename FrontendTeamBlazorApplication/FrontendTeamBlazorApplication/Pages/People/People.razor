@@ -1,0 +1,59 @@
+@page "/people"
+@using FrontendTeamBlazorApplication.Services
+@using FrontendTeamBlazorApplication.Models
+
+@inject ScrumOrganizationService ScrumOrganizationService
+@inject TeamService TeamService
+
+<h3>People</h3>
+
+@if (_scrumOrganizations == null && !loadTeam)
+{
+    <p>
+        <em>Loading Organizations...</em>
+    </p>
+}
+else
+{
+    <div>
+        <p>
+            <label>Please choose a Scrum Organization!</label>
+            <select class="form-control selectpicker" @bind="_selectedOrganization.Id">
+                @foreach (ScrumOrganization scrumOrganization in _scrumOrganizations)
+                {
+                    <option value="@scrumOrganization.Id">@scrumOrganization.Name</option>
+                }
+            </select>
+        </p>
+        <br/>
+        <br/>
+        <div>
+            <p>
+                <input type="submit" value="Load Teams" class="btn btn-primary" @onclick="@LoadTeams">
+            </p>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ScrumOrganization> _scrumOrganizations;
+
+    private ScrumOrganization _selectedOrganization;
+
+    private List<Team> _teams;
+
+    private bool loadTeam = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _scrumOrganizations = await ScrumOrganizationService.GetAllScrumOrganizationsAsync();
+        _selectedOrganization = new();
+    }
+
+    private async Task LoadTeams()
+    {
+        loadTeam = true;
+        _teams = await TeamService.GetTeamsByOrganizationIdAsync(_selectedOrganization.Id);
+    //NavigationManager.NavigateTo("/addscrumorganization", true);
+    }
+}

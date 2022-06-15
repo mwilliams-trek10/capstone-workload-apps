@@ -1,0 +1,98 @@
+@page "/teams"
+@using FrontendTeamBlazorApplication.Services
+@using FrontendTeamBlazorApplication.Models
+
+@inject ScrumOrganizationService ScrumOrganizationService
+@inject TeamService TeamService
+
+<h3>Teams</h3>
+
+@if (_scrumOrganizations == null && !loadTeam)
+{
+    <p>
+        <em>Loading Organizations...</em>
+    </p>
+}
+else if (!loadTeam)
+{
+    <div>
+        <p>
+            <label>Please choose a Scrum Organization!</label>
+            <select class="form-control selectpicker" @bind="_selectedOrganization.Id">
+                @foreach (ScrumOrganization scrumOrganization in _scrumOrganizations)
+                {
+                    <option value="@scrumOrganization.Id">@scrumOrganization.Name</option>
+                }
+            </select>
+        </p>
+        <br/>
+        <br/>
+        <div>
+            <p>
+                <input type="submit" value="Load Teams" class="btn btn-primary" @onclick="@LoadTeams">
+            </p>
+        </div>
+    </div>
+}
+else if (_teams == null)
+{
+    <p>
+        <em>Loading Teams...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Scrum Organization Name</th>
+            <th>Id</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var team in _teams)
+        {
+            <tr>
+                <td>@team.TeamName</td>
+                <td>@team.TeamNumber</td>
+                @* <td><a href="/editorganization/@scrumOrganization.Id.ToString()">Edit</a></td> *@
+                @* <td><input type="button" value="Edit" class="btn btn-link" @onclick="@(() => EditScrumOrganizationButtonClick(@organization))" /></td> *@
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private List<ScrumOrganization> _scrumOrganizations;
+
+    private ScrumOrganization _selectedOrganization;
+
+    private List<Team> _teams;
+
+    private bool loadTeam = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _scrumOrganizations = await ScrumOrganizationService.GetAllScrumOrganizationsAsync();
+        _selectedOrganization = new();
+    }
+
+    private async Task LoadTeams()
+    {
+        loadTeam = true;
+        _teams = await TeamService.GetTeamsByOrganizationIdAsync(_selectedOrganization.Id);
+        //NavigationManager.NavigateTo("/addscrumorganization", true);
+    }
+    
+@*     <select class="form-control selectpicker" @bind="Employee.CountryID"> *@
+@*     <option>--select--</option> *@
+@*                         @foreach (var item in Countries) *@
+@*     { *@
+@*         <option value="@item.Id">@item.Name</option> // Blazor needs to know what values it binds to! *@
+@* } *@
+@* </select> *@
+
+}

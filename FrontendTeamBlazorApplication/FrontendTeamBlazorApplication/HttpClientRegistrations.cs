@@ -29,5 +29,16 @@ public static class HttpClientRegistrations
         {
             httpClient.BaseAddress = new Uri($"{BackendServiceUri}/api/scrumorganization/updatescrumorganization");
         });
+        
+        
+        
+        
+        builder.Services.AddHttpClient("GetTeamsByOrganizationIdAsync", httpClient =>
+        {
+            httpClient.BaseAddress = new Uri($"{BackendServiceUri}/api/team/GetTeamsByOrganizationId");
+        });
+        
+        
+        
     }
 }

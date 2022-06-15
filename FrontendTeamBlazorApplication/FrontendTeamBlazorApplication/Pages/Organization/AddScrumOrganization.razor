@@ -18,7 +18,7 @@
   
   <div class="add-boxes">
     <p>
-      <label class="input-label">ScrumOrganization Name:</label>
+      <label class="input-label">Scrum Organization Name:</label>
       <InputText @bind-Value=ScrumOrganization.Name id="Name"/>
     </p>
     <p>
@@ -28,6 +28,10 @@
     <p>
       <label class="input-label">Scrum Team Count:</label>
       <InputNumber @bind-Value="ScrumOrganization.ScrumTeamCount"/>
+    </p>
+    <p>
+      <label class="input-label">Supervisor Count:</label>
+      <InputNumber @bind-Value="ScrumOrganization.SupervisorCount"/>
     </p>
   </div>
   
@@ -49,7 +53,7 @@
   @if (_saveSuccessful)
   {
     <div class="row bg-success text-white" style="margin-top:10px; height:40px">
-      <label class="p-2">ScrumOrganization successfully saved...</label>
+      <label class="p-2">Scrum Organization successfully saved...</label>
     </div>
   }
   

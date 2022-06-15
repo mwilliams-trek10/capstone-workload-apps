@@ -25,4 +25,8 @@ public sealed class ScrumOrganization
     [Required]
     [Range(1, 50, ErrorMessage = "Scrum team must be between (1-50).")]
     public int? ScrumTeamCount { get; set; }
+    
+    [Required]
+    [Range(1, 50, ErrorMessage = "Scrum team must be between (1-50).")]
+    public int? SupervisorCount { get; set; }
 }
