@@ -3,7 +3,7 @@ using BackendTeamWebApiService.Models;
 namespace BackendTeamWebApiService.Repositories;
 
 /// <summary>
-/// Dynamo DB Access Service
+/// Scrum Organization Repository
 /// </summary>
 public interface IScrumOrganizationRepository
 {

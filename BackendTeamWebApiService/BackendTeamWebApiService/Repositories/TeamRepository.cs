@@ -1,12 +1,13 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using BackendTeamWebApiService.Models;
+using BackendTeamWebApiService.Utilities;
 using Microsoft.Extensions.Options;
 
 namespace BackendTeamWebApiService.Repositories;
 
 /// <inheritdoc cref="ITeamRepository"/>
-public sealed class TeamRepository : ITeamRepository
+internal sealed class TeamRepository : ITeamRepository
 {
     private readonly ILogger<TeamRepository> _logger;
 
@@ -39,6 +40,58 @@ public sealed class TeamRepository : ITeamRepository
         await ProcessChunkedListOfTeams(chunkedTeams);
     }
     
+    public async Task<List<Team>> GetTeamsByOrganizationId(Guid organizationId)
+    {
+        try
+        {
+            QueryRequest request = new QueryRequest
+            {
+                TableName = Constants.CapstoneTeamTableName,
+                KeyConditionExpression = "OrganizationId = :organizationId",
+                ExpressionAttributeValues =
+                {
+                    {":organizationId", new AttributeValue(organizationId.ToString())}
+                }
+            };
+            var response = await _amazonDynamoDbClient.QueryAsync(request);
+
+            return ConvertResponseToTeams(response.Items);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            _logger.LogError(ex.StackTrace);
+            throw;
+        }
+    }
+
+    public async Task<Team> GetTeamByIds(Guid organizationId, Guid teamId)
+    {
+        try
+        {
+            GetItemRequest request = new GetItemRequest
+            {
+                TableName = Constants.CapstoneTeamTableName,
+                Key = 
+                {
+                    {"OrganizationId", new AttributeValue(organizationId.ToString())},
+                    {"Id", new AttributeValue(teamId.ToString())}
+                }
+            };
+            var response = await _amazonDynamoDbClient.GetItemAsync(request);
+
+            List<Team> organizations = ConvertResponseToTeams(new List<Dictionary<string, AttributeValue>> {response.Item });
+            return organizations.First();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            _logger.LogError(ex.StackTrace);
+            throw;
+        }
+    }
+    
+    
     private async Task ProcessChunkedListOfTeams(IEnumerable<Dictionary<string, AttributeValue>[]> chunks)
     {
         foreach (var chunk in chunks)
@@ -65,7 +118,7 @@ public sealed class TeamRepository : ITeamRepository
     {
         try
         {
-            Dictionary<string, List<WriteRequest>> batchWriteItem = new() {{"capstone-teams", writeRequests}};
+            Dictionary<string, List<WriteRequest>> batchWriteItem = new() {{Constants.CapstoneTeamTableName, writeRequests}};
             BatchWriteItemRequest batchWriteItemRequest = new BatchWriteItemRequest(batchWriteItem);
             await _amazonDynamoDbClient.BatchWriteItemAsync(batchWriteItemRequest);
         }
@@ -86,6 +139,30 @@ public sealed class TeamRepository : ITeamRepository
             {"OrganizationId", new AttributeValue(team.OrganizationId.ToString())},
             {"ScrumMasterId", new AttributeValue(team.ScrumMasterId.ToString())},
             {"TeamName", new AttributeValue(team.TeamName)}
+        };
+    }
+    
+    private List<Team> ConvertResponseToTeams(List<Dictionary<string, AttributeValue>> responseItems)
+    {
+        List<Team> organizations = new List<Team>();
+
+        foreach (Dictionary<string, AttributeValue> item in responseItems)
+        {
+            organizations.Add(ConvertDictionaryAttributesToTeam(item));
+        }
+
+        return organizations;
+    }
+
+    private Team ConvertDictionaryAttributesToTeam(Dictionary<string, AttributeValue> attributeValues)
+    {
+        return new Team
+        {
+            Id = new Guid(attributeValues["Id"].S),
+            TeamNumber = attributeValues["TeamNumber"].S,
+            OrganizationId = new Guid(attributeValues["OrganizationId"].S),
+            ScrumMasterId = new Guid(attributeValues["ScrumMasterId"].S),
+            TeamName = attributeValues["TeamName"].S
         };
     }
 }

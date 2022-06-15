@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 namespace BackendTeamWebApiService.Services;
 
@@ -6,6 +5,7 @@ using System.Text;
 using Models;
 using Utilities;
 
+/// <inheritdoc cref="ICreateOrganizationService"/>
 internal sealed class CreateOrganizationService : ICreateOrganizationService
 {
     private readonly string _alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -24,6 +24,7 @@ internal sealed class CreateOrganizationService : ICreateOrganizationService
         _organization = new();
     }
 
+    /// <inheritdoc cref="ICreateOrganizationService"/>
     public async Task<IOrganization> CreateScrumTeamOrganizationAsync(AddScrumOrganizationArgs addScrumOrganizationArgs)
     {
         _addScrumOrganizationArgs = addScrumOrganizationArgs;
@@ -100,24 +101,6 @@ internal sealed class CreateOrganizationService : ICreateOrganizationService
         {
             _organization.Teams.First(p => p.Id == result.teamId).ScrumMasterId = result.scrumMasterId;
         }
-
-        // foreach (var team in _organization.Teams)
-        // {
-        //     // var groupedScrumMasterCounts = from sm in _organization.ScrumMasters
-        //     //     join tm in _organization.Teams
-        //     //         on sm.Id equals tm.ScrumMasterId into tmToSm
-        //     //     from smCount in tmToSm.DefaultIfEmpty()
-        //     //     group smCount by sm.Id into groupedSmCounts
-        //     //     select new
-        //     //     {
-        //     //         scrumMaster = groupedSmCounts.Key,
-        //     //         count = groupedSmCounts.Count()
-        //     //     };
-        //     
-        //     _organization.ScrumMasters
-        //
-        //     team.ScrumMasterId = groupedScrumMasterCounts.OrderBy(p => p.count).First().scrumMaster;
-        // }
     }
 
     private async Task CreateTeams()

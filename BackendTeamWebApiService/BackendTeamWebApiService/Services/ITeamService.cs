@@ -1,19 +1,12 @@
 using BackendTeamWebApiService.Models;
 
-namespace BackendTeamWebApiService.Repositories;
+namespace BackendTeamWebApiService.Services;
 
 /// <summary>
-/// Team Repository
+/// Team Service
 /// </summary>
-public interface ITeamRepository
+public interface ITeamService
 {
-    /// <summary>
-    /// Writes the teams to dynamo db.
-    /// </summary>
-    /// <param name="teams">The teams</param>
-    /// <returns><see cref="Task"/></returns>
-    Task WriteTeamsToDynamoDbAsync(List<Team> teams);
-
     /// <summary>
     /// Gets all teams for an organization
     /// </summary>

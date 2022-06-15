@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 /// <summary>
-/// Organization Controller.
+/// Scrum Organization Controller.
 /// </summary>
 [ApiController]
 [Route("api/[controller]/[action]")]
@@ -20,7 +20,7 @@ public sealed class ScrumOrganizationController : ControllerBase
     /// <summary>
     /// Initializes a new instance of <see cref="ScrumOrganizationController"/>
     /// </summary>
-    /// <param name="scrumOrganizationService">The organization service.</param>
+    /// <param name="scrumOrganizationService">The scrum organization service.</param>
     /// <param name="logger">The logger.</param>
     public ScrumOrganizationController(IScrumOrganizationService scrumOrganizationService, ILogger<ScrumOrganizationController> logger)
     {
@@ -41,7 +41,7 @@ public sealed class ScrumOrganizationController : ControllerBase
     }
 
     /// <summary>
-    /// Adds a new organization.
+    /// Adds a new scrum organization.
     /// </summary>
     /// <param name="addScrumOrganizationArgs"></param>
     /// <returns>Ok Http Status code if successful.</returns>
@@ -107,7 +107,7 @@ public sealed class ScrumOrganizationController : ControllerBase
     }
     
     /// <summary>
-    /// Gets scrum organization by id..
+    /// Gets scrum organization by id
     /// </summary>
     /// <returns>Ok Http Status code if successful.</returns>
     [HttpGet]

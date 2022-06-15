@@ -1,7 +1,6 @@
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.Runtime;
-using Amazon.Runtime.CredentialManagement;
 using BackendTeamWebApiService.Repositories;
 
 namespace BackendTeamWebApiService;
@@ -32,6 +31,10 @@ public static class ServiceBuilder
         serviceCollection.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
         serviceCollection.AddScoped<IPersonRepository, PersonRepository>();
         serviceCollection.AddScoped<ITeamRepository, TeamRepository>();
+        serviceCollection.AddScoped<ITeamService, TeamService>();
+        serviceCollection.AddScoped<IPersonService, PersonService>();
+        serviceCollection.AddScoped<ITeamMemberService, TeamMemberService>();
+        serviceCollection.AddScoped<IReportingService, ReportingService>();
         
         AddConfigurationOptions(serviceCollection, configurationOptions);
 
@@ -46,7 +49,7 @@ public static class ServiceBuilder
 
     private static void AddConfigurationOptions(IServiceCollection services, ConfigurationOptions configurationOptions)
     {
-        services.AddSingleton(p =>
+        services.AddSingleton(_ =>
             Options.Create(
                 options: configurationOptions));
     }
@@ -70,7 +73,7 @@ public static class ServiceBuilder
 
     private static void CreateAmazonDynamoDbClient(IServiceCollection services, AWSCredentials awsCredentials)
     {
-        services.AddSingleton(p =>
+        services.AddSingleton(_ =>
         {
             // SessionAWSCredentials awsCredentials = new SessionAWSCredentials(Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),
             //     Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"),

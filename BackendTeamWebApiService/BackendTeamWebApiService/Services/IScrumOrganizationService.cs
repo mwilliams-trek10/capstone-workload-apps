@@ -1,5 +1,3 @@
-
-
 namespace BackendTeamWebApiService.Services;
 
 using Models;

@@ -1,18 +1,17 @@
 
 
+using BackendTeamWebApiService.Utilities;
+
 namespace BackendTeamWebApiService.Services;
 
 using Models;
 using Repositories;
 
 /// <summary>
-/// Organization Service
+/// Scrum Organization Service
 /// </summary>
 internal sealed class ScrumOrganizationService : IScrumOrganizationService
-{
-    private readonly ILogger<ScrumOrganizationService> _logger;
-
-    private readonly ICreateOrganizationService _createOrganizationService;
+{private readonly ICreateOrganizationService _createOrganizationService;
 
     private readonly IScrumOrganizationRepository _scrumOrganizationRepository;
 
@@ -25,20 +24,18 @@ internal sealed class ScrumOrganizationService : IScrumOrganizationService
     /// <summary>
     /// Initializes an instance of <see cref="ScrumOrganizationService"/>
     /// </summary>
-    /// <param name="logger">Organization Service logger</param>
     /// <param name="createOrganizationService">Create organization process</param>
     /// <param name="scrumOrganizationRepository">Scrum organization repository</param>
     /// <param name="personRepository">Person Repository</param>
     /// <param name="teamMemberRepository">Team Member repository</param>
     /// <param name="teamRepository">Team repository</param>
-    public ScrumOrganizationService(ILogger<ScrumOrganizationService> logger,
+    public ScrumOrganizationService(
         ICreateOrganizationService createOrganizationService,
         IScrumOrganizationRepository scrumOrganizationRepository,
         IPersonRepository personRepository,
         ITeamMemberRepository teamMemberRepository,
         ITeamRepository teamRepository)
     {
-        _logger = logger;
         _createOrganizationService = createOrganizationService;
         _scrumOrganizationRepository = scrumOrganizationRepository;
         _personRepository = personRepository;
@@ -51,8 +48,8 @@ internal sealed class ScrumOrganizationService : IScrumOrganizationService
     {
         IOrganization newOrganization = await this._createOrganizationService.CreateScrumTeamOrganizationAsync(addScrumOrganizationArgs);
         await this._scrumOrganizationRepository.WriteOrganizationToDynamoDbAsync(newOrganization);
-        await this._personRepository.WriteListOfPersonsToDynamoDbAsync(newOrganization.Supervisors, "capstone-supervisors");
-        await this._personRepository.WriteListOfPersonsToDynamoDbAsync(newOrganization.Supervisors, "capstone-scrummasters");
+        await this._personRepository.WriteListOfPersonsToDynamoDbAsync(newOrganization.Supervisors, Constants.CapstoneSupervisorsTableName);
+        await this._personRepository.WriteListOfPersonsToDynamoDbAsync(newOrganization.ScrumMasters, Constants.CapstoneScrumMastersTableName);
         await this._teamMemberRepository.WriteTeamMembersToDynamoDbAsync(newOrganization.TeamMembers);
         await this._teamRepository.WriteTeamsToDynamoDbAsync(newOrganization.Teams);
     }

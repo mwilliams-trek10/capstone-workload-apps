@@ -1,14 +1,14 @@
+namespace BackendTeamWebApiService.Repositories;
+
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using BackendTeamWebApiService.Models;
-using BackendTeamWebApiService.Services;
+using Models;
 using Microsoft.Extensions.Options;
-
-namespace BackendTeamWebApiService.Repositories;
+using Utilities;
 
 /// <inheritdoc cref="IScrumOrganizationRepository"/>
 internal sealed class ScrumOrganizationRepository : IScrumOrganizationRepository
-{
+{   
     private readonly ILogger<ScrumOrganizationRepository> _logger;
 
     private readonly AmazonDynamoDBClient _amazonDynamoDbClient;
@@ -26,7 +26,7 @@ internal sealed class ScrumOrganizationRepository : IScrumOrganizationRepository
         
         try
         {
-            await _amazonDynamoDbClient.PutItemAsync("mcw-capstone-project", organizationAttributes);
+            await _amazonDynamoDbClient.PutItemAsync(Constants.OrganizationTableName, organizationAttributes);
         }
         catch (Exception ex)
         {
@@ -51,7 +51,7 @@ internal sealed class ScrumOrganizationRepository : IScrumOrganizationRepository
         {
             ScanRequest request = new ScanRequest
             {
-                TableName = "mcw-capstone-project",
+                TableName = Constants.OrganizationTableName,
                 AttributesToGet = {"Id", "Name"}
             };
             var response = await _amazonDynamoDbClient.ScanAsync(request);
@@ -72,10 +72,8 @@ internal sealed class ScrumOrganizationRepository : IScrumOrganizationRepository
         {
             GetItemRequest request = new GetItemRequest
             {
-                TableName = "mcw-capstone-project",
+                TableName = Constants.OrganizationTableName,
                 AttributesToGet = {"Id", "Name"},
-                //FilterExpression = "Id=:id",
-                // KeyConditionExpression = "",
                 Key = 
                 {
                     {"Id", new AttributeValue(id.ToString())}
@@ -98,7 +96,7 @@ internal sealed class ScrumOrganizationRepository : IScrumOrganizationRepository
     {
         UpdateItemRequest updateItemRequest = new UpdateItemRequest
         {
-            TableName = "mcw-capstone-project",
+            TableName = Constants.OrganizationTableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 {"Id", new AttributeValue
